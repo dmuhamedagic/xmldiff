@@ -3,6 +3,7 @@ from csv import reader
 from json import loads
 from lxml import etree
 from xmldiff import actions
+import sys
 
 
 class Patcher:
@@ -51,7 +52,10 @@ class Patcher:
         node.attrib[action.name] = action.value
 
     def _handle_DeleteAttrib(self, action, tree):
-        del tree.xpath(action.node)[0].attrib[action.name]
+        try:
+            del tree.xpath(action.node)[0].attrib[action.name]
+        except KeyError:
+            print("attritube to be deleted does not exist", file=sys.stderr)
 
     def _handle_InsertAttrib(self, action, tree):
         node = tree.xpath(action.node)[0]
